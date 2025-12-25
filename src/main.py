@@ -176,6 +176,13 @@ def parseCliArgs() -> Namespace:
         + addExistingConfigValueHelp("ticket_path"),
         type=str,
     )
+    _ = parser.add_argument(
+        "-r",
+        "--revision",
+        default=1,
+        help="The revision number of this ticket.",
+        type=int,
+    )
 
     # ----- Parse Args -----
     args = parser.parse_args()
@@ -328,6 +335,7 @@ def printTypstTicket(
     due_date_str: str | None = None,
     due_time_str: str | None = None,
     extra_content: str | None = None,
+    revision: int = 1,
     typst_bin_path: str = "typst",
     ticket_path: str = "./ticket.typ",
 ):
@@ -347,6 +355,8 @@ def printTypstTicket(
         sys_inputs["due_time_str"] = due_time_str
     if extra_content:
         sys_inputs["extra_content"] = extra_content
+    if type(revision) == int:
+        sys_inputs["revision"] = str(revision)
 
     ppi = 500
     try:
@@ -404,6 +414,7 @@ def main():
                 if type(args.extra_content) == list
                 else args.extra_content
             ),
+            revision=args.revision,
             typst_bin_path=args.typst_path,
             ticket_path=args.ticket_path,
         )
