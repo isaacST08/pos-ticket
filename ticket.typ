@@ -212,9 +212,6 @@
 // ||          <<<<< MAIN >>>>>          ||
 // **====================================**
 
-
-#(title = "Dishwasher")
-
 #ticketTemplate(
   ticket_type,
   title: title,
