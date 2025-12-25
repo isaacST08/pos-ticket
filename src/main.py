@@ -88,7 +88,7 @@ def parseCliArgs() -> Namespace:
         "extra_content",
         default="",
         help="Extra content to add to the ticket.",
-        nargs="?",
+        nargs="*",
         type=str,
     )
 
@@ -399,7 +399,11 @@ def main():
             sub_title=args.sub_title,
             due_date_str=args.due_date,
             due_time_str=args.due_time,
-            extra_content=args.extra_content,
+            extra_content=(
+                " ".join(args.extra_content)
+                if type(args.extra_content) == list
+                else args.extra_content
+            ),
             typst_bin_path=args.typst_path,
             ticket_path=args.ticket_path,
         )
