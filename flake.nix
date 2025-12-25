@@ -38,6 +38,26 @@
             pkgs = import nixpkgs {inherit system;};
           }
       );
+
+    # **============================================**
+    # ||          <<<<< REQUIREMENTS >>>>>          ||
+    # **============================================**
+
+    requiredPythonPackages = pyPkgs:
+      with pyPkgs; [
+        python-escpos
+        pyusb
+        pillow
+        qrcode
+        pyserial
+        python-barcode
+        xdg
+      ];
+
+    requiredSystemPackages = pkgs:
+      with pkgs; [
+        typst
+      ];
   in {
     packages = forAllSystems (
       {pkgs, ...}: let
@@ -53,19 +73,8 @@
           src = ./src;
 
           buildInputs = with pyPkgs; [setuptools wheel];
-          propagatedBuildInputs = with pyPkgs; [
-            python-escpos
-            pyusb
-            pillow
-            qrcode
-            pyserial
-            python-barcode
-            xdg
-          ];
-
-          dependencies = with pkgs; [
-            typst
-          ];
+          propagatedBuildInputs = requiredPythonPackages pyPkgs;
+          dependencies = requiredSystemPackages pkgs;
         };
 
         pythonEnv = pkgs.${pythonPkgName}.buildEnv.override {
@@ -96,6 +105,21 @@
               ${mkPythonBin pname []}
               ${mkPythonBin "todo" ["Todo"]}
             '';
+        };
+      }
+    );
+
+    devShells = forAllSystems (
+      {pkgs, ...}: let
+        python = pkgs.${pythonPkgName}.override {
+          self = python;
+        };
+      in {
+        default = pkgs.mkShell {
+          packages = (
+            (requiredSystemPackages pkgs)
+            ++ [(python.withPackages (python-pkgs: requiredPythonPackages python-pkgs))]
+          );
         };
       }
     );
