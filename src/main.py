@@ -161,6 +161,13 @@ def parseCliArgs() -> Namespace:
         + addExistingConfigValueHelp("printer_width"),
         type=int,
     )
+    _ = parser.add_argument(
+        "-T",
+        "--typst-path",
+        default="typst",
+        help="The path to the typst binary. [Default: `typst`]",
+        type=str,
+    )
 
     # ----- Parse Args -----
     args = parser.parse_args()
@@ -282,9 +289,16 @@ def typstCompile(
     format: str,
     ppi: int,
     sys_inputs: dict[str, str],
+    typst_bin_path: str = "typst",
 ) -> bytes:
     # Construct the args for compiling the Typst document.
-    args = ["typst", "compile", source_path, f"--ppi={ppi}", f"--format={format}"]
+    args = [
+        typst_bin_path,
+        "compile",
+        source_path,
+        f"--ppi={ppi}",
+        f"--format={format}",
+    ]
     for key, val in sys_inputs.items():
         args.append("--input")
         args.append(f"{key}={val}")
@@ -305,6 +319,7 @@ def printTypstTicket(
     due_date_str: str | None = None,
     due_time_str: str | None = None,
     extra_content: str | None = None,
+    typst_bin_path: str = "typst",
 ):
     # Create the default sys input for typst with just the ticket type.
     sys_inputs = {
@@ -340,6 +355,7 @@ def printTypstTicket(
         format="png",
         ppi=ppi,
         sys_inputs=sys_inputs,
+        typst_bin_path=typst_bin_path,
     )
 
     # Convert the Typst PNG bytes to an image that is scaled to the width of
@@ -374,6 +390,7 @@ def main():
             due_date_str=args.due_date,
             due_time_str=args.due_time,
             extra_content=args.extra_content,
+            typst_bin_path=args.typst_path,
         )
 
 
