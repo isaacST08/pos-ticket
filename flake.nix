@@ -94,7 +94,7 @@
             ''
               cat > $out/bin/${name} <<EOF
               #!/bin/sh
-              exec ${pythonEnv}/bin/python3 ${src}/src/main.py -T "${lib.getExe pkgs.typst}" ${builtins.concatStringsSep " " args} "\$@"
+              exec ${pythonEnv}/bin/python3 ${src}/src/main.py -T "${lib.getExe pkgs.typst}" -k ${src}/ticket.typ ${builtins.concatStringsSep " " args} "\$@"
               EOF
               chmod +x $out/bin/${name}
             '';

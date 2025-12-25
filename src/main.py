@@ -168,6 +168,14 @@ def parseCliArgs() -> Namespace:
         help="The path to the typst binary. [Default: `typst`]",
         type=str,
     )
+    _ = parser.add_argument(
+        "-k",
+        "--ticket-path",
+        default=conf.get("ticket_path", getConfigDir() / "ticket.typ"),
+        help="The path to the typst file to use to format the ticket."
+        + addExistingConfigValueHelp("ticket_path"),
+        type=str,
+    )
 
     # ----- Parse Args -----
     args = parser.parse_args()
@@ -183,6 +191,7 @@ def parseCliArgs() -> Namespace:
         updateConfigEntry(conf, "hostname", args.hostname)
         updateConfigEntry(conf, "port", args.port)
         updateConfigEntry(conf, "printer_width", args.printer_width)
+        updateConfigEntry(conf, "ticket_path", args.ticket_path)
 
         storeConfig(conf)
 
@@ -320,6 +329,7 @@ def printTypstTicket(
     due_time_str: str | None = None,
     extra_content: str | None = None,
     typst_bin_path: str = "typst",
+    ticket_path: str = "./ticket.typ",
 ):
     # Create the default sys input for typst with just the ticket type.
     sys_inputs = {
@@ -351,7 +361,7 @@ def printTypstTicket(
 
     # Compile the typst ticket.
     png_bytes = typstCompile(
-        "./ticket.typ",
+        ticket_path,
         format="png",
         ppi=ppi,
         sys_inputs=sys_inputs,
@@ -391,6 +401,7 @@ def main():
             due_time_str=args.due_time,
             extra_content=args.extra_content,
             typst_bin_path=args.typst_path,
+            ticket_path=args.ticket_path,
         )
 
 
