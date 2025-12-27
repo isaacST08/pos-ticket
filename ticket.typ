@@ -202,7 +202,7 @@
             #line(length: 98%, stroke: (cap: "round", thickness: 1.2pt))
             #v(-9pt)
             #set align(left)
-            #content
+            #eval(content, mode: "markup")
           ],
         )
 
